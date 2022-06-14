@@ -24,6 +24,29 @@ const getInstances = async () => {
   return data.Reservations;
 };
 
+const getInstancesDetails = async () => {
+  const instanceDetailsArray = [];
+  const instances = await getInstances();
+  if (instances && instances.length) {
+    await instances.reduce(async (instancePromise, instance) => {
+      await instancePromise;
+      if (!instance.Instances) {
+        return [];
+      }
+      await instance.Instances.reduce(
+        async (instanceDetailsPromise, instanceDetails) => {
+          await instanceDetailsPromise;
+          instanceDetailsArray.push(instanceDetails);
+        },
+        Promise.resolve()
+      );
+    }, Promise.resolve());
+  }
+
+  return instanceDetailsArray;
+};
+
 module.exports = {
   getInstances,
+  getInstancesDetails,
 };
